@@ -1,4 +1,13 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+
+interface DevInterface extends Document {
+   name?: string;
+   user?: string;
+   bio?: string;
+   avatar?: string;
+   likes?: Schema.Types.ObjectId;
+   dislikes?: Schema.Types.ObjectId;
+}
 
 const DevSchema = new Schema(
    {
@@ -33,4 +42,4 @@ const DevSchema = new Schema(
    }
 );
 
-export default model('Dev', DevSchema);
+export default model<DevInterface>('Dev', DevSchema);
