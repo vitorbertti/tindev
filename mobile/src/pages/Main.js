@@ -17,6 +17,8 @@ import like from '../assets/like.png';
 import dislike from '../assets/dislike.png';
 import itsamatch from '../assets/itsamatch.png';
 
+import {API_URL} from 'react-native-dotenv';
+
 export default function Main({navigation}) {
   const id = navigation.getParam('user');
   const [users, setUsers] = useState([]);
@@ -37,7 +39,7 @@ export default function Main({navigation}) {
   }, [id]);
 
   useEffect(() => {
-    const socket = io('http://localhost:3333', {
+    const socket = io(API_URL, {
       query: {user: id},
     });
 
