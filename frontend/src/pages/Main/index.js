@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import io from 'socket.io-client';
-import './Main.css';
+import './styles.css';
 
-import api from '../services/api';
+import api from '../../services/api';
 
-import logo from '../assets/logo.svg';
-import dislike from '../assets/dislike.svg';
-import like from '../assets/like.svg';
-import itsamatch from '../assets/itsamatch.png';
+import logo from '../../assets/logo.svg';
+import dislike from '../../assets/dislike.svg';
+import like from '../../assets/like.svg';
+import itsamatch from '../../assets/itsamatch.png';
 
-export default function Main({ match }) {
+export default function Main() {
    const [users, setUsers] = useState([]);
    const [matchDev, setMatchDev] = useState(null);
+   let { devId } = useParams();
 
    useEffect(() => {
       async function loadUsers() {
          const response = await api.get('/devs', {
             headers: {
-               user: match.params.id,
+               user: devId,
             },
          });
 
@@ -26,21 +27,21 @@ export default function Main({ match }) {
       }
 
       loadUsers();
-   }, [match.params.id]);
+   }, [devId]);
 
    useEffect(() => {
-      const socket = io('http://localhost:3333', {
-         query: { user: match.params.id },
+      const socket = io(process.env.REACT_APP_SERVER_URL, {
+         query: { user: devId },
       });
 
       socket.on('match', (dev) => {
          setMatchDev(dev);
       });
-   }, [match.params.id]);
+   }, [devId]);
 
    async function handleLike(id) {
       await api.post(`/devs/${id}/likes`, null, {
-         headers: { user: match.params.id },
+         headers: { user: devId },
       });
 
       setUsers(users.filter((user) => user._id !== id));
@@ -48,7 +49,7 @@ export default function Main({ match }) {
 
    async function handleDislike(id) {
       await api.post(`/devs/${id}/dislikes`, null, {
-         headers: { user: match.params.id },
+         headers: { user: devId },
       });
 
       setUsers(users.filter((user) => user._id !== id));
